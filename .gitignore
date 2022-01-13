@@ -1,0 +1,25 @@
+okta-app/node_modules
+
+okta-app/.DS_Store
+okta-app/node_modules
+okta-app/dist
+
+
+# local env files
+okta-app/.env.local
+okta-app/.env.*.local
+
+# Log files
+okta-app/npm-debug.log*
+okta-app/yarn-debug.log*
+okta-app/yarn-error.log*
+okta-app/pnpm-debug.log*
+
+# Editor directories and files
+okta-app/.idea
+okta-app/.vscode
+okta-app/*.suo
+okta-app/*.ntvs*
+okta-app/*.njsproj
+okta-app/*.sln
+okta-app/*.sw?
