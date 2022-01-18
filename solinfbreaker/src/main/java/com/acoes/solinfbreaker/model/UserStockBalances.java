@@ -3,6 +3,7 @@ package com.acoes.solinfbreaker.model;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -10,9 +11,10 @@ import java.util.Objects;
 @Table (name="user_stock_balances")
 public class UserStockBalances implements Serializable {
     @Id
-    private Long id_stock;
+    private Long id;
     private String stock_symbol;
     private String stock_name;
+    private double price;
     private Long volume;
     private Timestamp created_on;
     private Timestamp updated_on;
@@ -21,12 +23,12 @@ public class UserStockBalances implements Serializable {
     @Id
     private User user;
 
-    public Long getId_stock() {
-        return id_stock;
+    public Long getId() {
+        return id;
     }
 
-    public void setId_stock(Long id_stock) {
-        this.id_stock = id_stock;
+    public void setId_stock(Long id) {
+        this.id = id;
     }
 
     public String getStock_symbol() {
@@ -77,16 +79,29 @@ public class UserStockBalances implements Serializable {
         this.user = user;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserStockBalances that = (UserStockBalances) o;
-        return Objects.equals(id_stock, that.id_stock) && Objects.equals(stock_symbol, that.stock_symbol) && Objects.equals(stock_name, that.stock_name) && Objects.equals(volume, that.volume) && Objects.equals(created_on, that.created_on) && Objects.equals(updated_on, that.updated_on) && Objects.equals(user, that.user);
+        return Objects.equals(id, that.id) && Objects.equals(stock_symbol, that.stock_symbol) && Objects.equals(stock_name, that.stock_name) && Objects.equals(volume, that.volume) && Objects.equals(created_on, that.created_on) && Objects.equals(updated_on, that.updated_on) && Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id_stock, stock_symbol, stock_name, volume, created_on, updated_on, user);
+        return Objects.hash(id, stock_symbol, stock_name, volume, created_on, updated_on, user);
+    }
+
+    public UserStockBalances() {
+        this.created_on = Timestamp.valueOf(LocalDateTime.now());
+        this.updated_on = Timestamp.valueOf(LocalDateTime.now());
     }
 }

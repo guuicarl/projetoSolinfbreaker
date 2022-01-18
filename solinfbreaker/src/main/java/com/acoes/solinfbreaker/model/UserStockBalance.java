@@ -5,11 +5,11 @@ import java.util.Objects;
 
 public class UserStockBalance implements Serializable {
 
-        private Long id_stock;
+        private Long id;
         private User user;
 
-        public UserStockBalance(Long id_stock, User user){
-            this.id_stock = id_stock;
+        public UserStockBalance(Long id, User user){
+            this.id = id;
             this.user = user;
         }
 
@@ -18,12 +18,12 @@ public class UserStockBalance implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserStockBalance that = (UserStockBalance) o;
-        return Objects.equals(id_stock, that.id_stock) && Objects.equals(user, that.user);
+        return Objects.equals(id, that.id) && Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id_stock, user);
+        return Objects.hash(id, user);
     }
 }
 
