@@ -57,5 +57,6 @@ public class UserController {
     @PostMapping("/users")
     public User adicionar(@RequestBody User user) {
         return usersRepository.save(user);
+
     }
 }
