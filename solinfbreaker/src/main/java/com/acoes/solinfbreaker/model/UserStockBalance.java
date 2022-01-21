@@ -1,5 +1,8 @@
 package com.acoes.solinfbreaker.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -8,6 +11,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
+@Getter
+@Setter
 public class UserStockBalance implements Serializable {
 
         private Long id_stock;
@@ -21,21 +26,6 @@ public class UserStockBalance implements Serializable {
             this.user = user;
         }
 
-    public Long getId_stock() {
-        return id_stock;
-    }
-
-    public void setId_stock(Long id_stock) {
-        this.id_stock = id_stock;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public UserStockBalance(){}
 

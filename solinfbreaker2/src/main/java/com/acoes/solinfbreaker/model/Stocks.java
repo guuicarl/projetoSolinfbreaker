@@ -19,6 +19,8 @@ public class Stocks {
     private Timestamp created_on;
     private Timestamp updated_on;
 
+
+
     public Long getId() {
         return id;
     }

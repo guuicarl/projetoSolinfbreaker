@@ -1,5 +1,7 @@
 package com.acoes.solinfbreaker.service;
 
+import com.acoes.solinfbreaker.dto.StockDto;
+import com.acoes.solinfbreaker.dto.UserStockDto;
 import com.acoes.solinfbreaker.model.UserStockBalances;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -20,18 +22,32 @@ public class StockService {
     @Autowired
     private WebClient webClient;
     @GetMapping
-    public UserStockBalances obterPorCodigo(Long id, @RequestHeader("Authorization") String token ) {
-        Mono<UserStockBalances> monoStock = this.webClient
+    public UserStockDto obterPorCodigo(Long id, @RequestHeader("Authorization") String token ) {
+        Mono<UserStockDto> monoStock = this.webClient
                 .method(HttpMethod.GET)
                 .uri("/stocks/{id}", id)
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .retrieve()
-                .bodyToMono(UserStockBalances.class);
+                .bodyToMono(UserStockDto.class);
 
         monoStock.subscribe(s -> {
             System.out.println("acabou");
         });
-        UserStockBalances stock = monoStock.block();
+        UserStockDto stock = monoStock.block();
+        return stock;
+    }
+    public StockDto obterPorCodigo2(Long id, @RequestHeader("Authorization") String token ) {
+        Mono<StockDto> monoStock = this.webClient
+                .method(HttpMethod.GET)
+                .uri("/stocks/{id}", id)
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .retrieve()
+                .bodyToMono(StockDto.class);
+
+        monoStock.subscribe(s -> {
+            System.out.println("acabou");
+        });
+        StockDto stock = monoStock.block();
         return stock;
     }
     @GetMapping("/stocks")

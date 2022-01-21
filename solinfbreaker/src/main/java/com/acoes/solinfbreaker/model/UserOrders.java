@@ -1,11 +1,16 @@
 package com.acoes.solinfbreaker.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
 @Table (name = "user_orders")
 public class UserOrders {
 
@@ -19,6 +24,7 @@ public class UserOrders {
     private Double price;
     private Integer type;
     private Integer status;
+    private Long remaining_value;
 
 
 
@@ -29,96 +35,10 @@ public class UserOrders {
     @JoinColumn(name = "id_user")
     private User user;
 
-
-    public Long getId() {
-        return id;
+    public UserOrders() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId_stock() {
-        return id_stock;
-    }
-
-    public void setId_stock(Long id_stock) {
-        this.id_stock = id_stock;
-    }
-
-    public String getStock_symbol() {
-        return stock_symbol;
-    }
-
-    public void setStock_symbol(String stock_symbol) {
-        this.stock_symbol = stock_symbol;
-    }
-
-    public String getStock_name() {
-        return stock_name;
-    }
-
-    public void setStock_name(String stock_name) {
-        this.stock_name = stock_name;
-    }
-
-    public Long getVolume() {
-        return volume;
-    }
-
-    public void setVolume(Long volume) {
-        this.volume = volume;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Timestamp getCreated_on() {
-        return created_on;
-    }
-
-    public void setCreated_on(Timestamp created_on) {
-        this.created_on = created_on;
-    }
-
-    public Timestamp getUpdated_on() {
-        return updated_on;
-    }
-
-    public void setUpdated_on(Timestamp updated_on) {
-        this.updated_on = updated_on;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public UserOrders(User user, Long id_stock, String stock_symbol, String stock_name, Long volume, Double price, Integer type, Integer status){
+    public UserOrders(User user, Long id, Long id_stock, String stock_symbol, String stock_name, Long volume, Double price, Integer type, Integer status, Long remaining_value){
         this.user = user;
         this.id = id;
         this.id_stock = id_stock;
@@ -128,6 +48,7 @@ public class UserOrders {
         this.price = price;
         this.type = type;
         this.status = status;
+        this.remaining_value = remaining_value;
         this.created_on = Timestamp.valueOf(LocalDateTime.now());
         this.updated_on = Timestamp.valueOf(LocalDateTime.now());
     }
