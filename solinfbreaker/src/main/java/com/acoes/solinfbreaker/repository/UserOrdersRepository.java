@@ -30,7 +30,7 @@ List<UserOrders> findByTypeStock(Long id_stock);
 
 
     @Modifying
-    @Query(value = "UPDATE user_orders SET status = 2 WHERE id = ?1 ", nativeQuery = true)
+    @Query(value = "UPDATE user_orders SET status = 2 WHERE id = ?1 and remaining_value = 0 ", nativeQuery = true)
     int updateStatus(UserOrders id);
 
 

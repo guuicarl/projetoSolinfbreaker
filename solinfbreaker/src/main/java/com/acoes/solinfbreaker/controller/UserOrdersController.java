@@ -29,8 +29,15 @@ public class UserOrdersController {
     @PostMapping("/orders")
     public ResponseEntity<UserOrders> salvar(@RequestBody UserOrdersDto dto) {
         User user = usersRepository.findById(dto.getId_user()).orElseThrow();
-        UserOrders userOrders = userOrdersRepository.save(dto.tranformaParaObjeto1(user));
-        return new ResponseEntity<>(userOrders, HttpStatus.CREATED);
+        Double dollar = user.getDollar_balance();
+        Double mult = dto.getPrice() * dto.getVolume();
+        if(dollar >= mult) {
+            UserOrders userOrders = userOrdersRepository.save(dto.tranformaParaObjeto1(user));
+            return new ResponseEntity<>(userOrders, HttpStatus.CREATED);
+        } else {
+            System.out.println("Ordem não criada, valor insuficiente");
+        }
+        return null;
     }
 
     @PostMapping("/compra")
@@ -46,9 +53,6 @@ public class UserOrdersController {
                     for (UserOrders cont: userFind) {
                         userOrdersRepository.updateRemainingValue(cont);
                         System.out.println(cont);
-                    }
-                } else if (dto.getRemaining_value() == 0){
-                    for (UserOrders cont: userOrders) {
                         userOrdersRepository.updateStatus(cont);
                     }
                 }
