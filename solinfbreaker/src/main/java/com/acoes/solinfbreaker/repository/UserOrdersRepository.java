@@ -13,17 +13,20 @@ import java.util.List;
 @Transactional
 public interface UserOrdersRepository extends JpaRepository<UserOrders, Long> {
 //@Query(value = "SELECT * FROM user_orders WHERE type = 1 and id_stock = ?1 and status = 1", nativeQuery = true)
-@Query(value = "SELECT volume, type FROM user_orders WHERE type = 1 and id_stock = ?1 and status = 1", nativeQuery = true)
+@Query(value = "SELECT volume, type, id FROM user_orders WHERE type = 1 and id_stock = ?1 and status = 1", nativeQuery = true)
 List<UserOrders> findByTypeStock(Long id_stock);
 
 
 
-@Query(value = "SELECT MAX(a.volume) - MIN(b.volume)  AS ID FROM user_orders a, user_orders b  WHERE a.id=?1 AND a.type <> b.type", nativeQuery = true)
-List<UserOrders> findByCalculo(Long id);
+//@Query(value = "SELECT MAX(a.volume) - MIN(b.volume), a.id  AS ID FROM user_orders a, user_orders b  WHERE a.type = 1 AND a.volume <> b.volume and a.id_stock = ?1 group by a.id", nativeQuery = true)
+@Query(value = "SELECT * FROM user_orders a, user_orders b  where a.type <> b.type  and a.id_stock = b.id_stock ", nativeQuery = true)
+    List<UserOrders> findByCalculo();
 
 @Modifying
-    @Query(value = "update user_orders set remaining_value = ?1", nativeQuery = true)
-    int updateRemainingValue(UserOrders remaining_value);
+    //@Query(value = "update user_orders  set remaining_value = (SELECT MAX(a.volume) - MIN(b.volume) AS ID FROM user_orders a, user_orders b  WHERE a.type = 1  and a.id_stock = b.id_stock) where type =  1 AND id=?1", nativeQuery = true)
+    @Query(value = "update user_orders  set remaining_value = (SELECT MAX(a.volume) - MIN(b.volume)AS ID FROM user_orders a, user_orders b  WHERE a.type <> b.type  and a.id_stock = b.id_stock and a.id=?1) where type =  1 AND id=?1", nativeQuery = true)
+
+    int updateRemainingValue(UserOrders id);
 
 
     @Modifying

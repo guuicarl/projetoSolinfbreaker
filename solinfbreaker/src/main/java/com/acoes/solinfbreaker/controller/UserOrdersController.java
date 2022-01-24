@@ -39,16 +39,18 @@ public class UserOrdersController {
             List<UserOrders> userOrders =userOrdersRepository.findByTypeStock(dto.getId_stock());
 
             if (userOrders != null){
-                List<UserOrders> userCalculo = userOrdersRepository.findByCalculo(dto.getId());
-                if(userCalculo != null){
-                    for (UserOrders cont: userCalculo) {
+                List<UserOrders> userFind = userOrdersRepository.findByCalculo();
+                System.out.println(userFind);
+                if(userFind != null){
+                    System.out.println("cheguei");
+                    for (UserOrders cont: userFind) {
                         userOrdersRepository.updateRemainingValue(cont);
+                        System.out.println(cont);
                     }
-                }
-
-
-                for (UserOrders cont: userOrders) {
-                    userOrdersRepository.updateStatus(cont);
+                } else if (dto.getRemaining_value() == 0){
+                    for (UserOrders cont: userOrders) {
+                        userOrdersRepository.updateStatus(cont);
+                    }
                 }
             }
         }

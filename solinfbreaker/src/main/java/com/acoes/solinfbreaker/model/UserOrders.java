@@ -53,17 +53,19 @@ public class UserOrders {
         this.updated_on = Timestamp.valueOf(LocalDateTime.now());
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserOrders that = (UserOrders) o;
-        return Objects.equals(id, that.id) && Objects.equals(id_stock, that.id_stock) && Objects.equals(stock_symbol, that.stock_symbol) && Objects.equals(stock_name, that.stock_name) && Objects.equals(volume, that.volume) && Objects.equals(price, that.price) && Objects.equals(type, that.type) && Objects.equals(status, that.status) && Objects.equals(created_on, that.created_on) && Objects.equals(updated_on, that.updated_on) && Objects.equals(user, that.user);
+        return id.equals(that.id) && id_stock.equals(that.id_stock);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id_stock, stock_symbol, stock_name, volume, price, type, status, created_on, updated_on, user);
+        return Objects.hash(id, id_stock);
     }
+
+
+
 }
