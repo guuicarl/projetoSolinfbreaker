@@ -1,7 +1,9 @@
 package com.acoes.solinfbreaker.controller;
 
 //import com.acoes.solinfbreaker.model.Stock;
+import com.acoes.solinfbreaker.dto.UserOrdersDto;
 import com.acoes.solinfbreaker.model.User;
+import com.acoes.solinfbreaker.model.UserOrders;
 import com.acoes.solinfbreaker.model.UserStockBalances;
 import com.acoes.solinfbreaker.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,4 +62,5 @@ public class UserController {
         return usersRepository.save(user);
 
     }
+
 }
