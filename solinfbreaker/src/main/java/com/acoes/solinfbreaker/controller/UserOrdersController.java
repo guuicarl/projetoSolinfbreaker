@@ -41,12 +41,15 @@ public class UserOrdersController {
         return null;
     }
 
-    @PostMapping("/compra")
-     public UserOrders comprar(@RequestBody UserOrdersDto dto) throws SQLException {
+    @PostMapping("/venda")
+     public UserOrders vender(@RequestBody UserOrdersDto dto) throws SQLException {
 
         if(dto.getType() == 0){
             List<UserOrders> userOrders =userOrdersRepository.findByTypeStock(dto.getId_stock());
             List<UserOrders> userStatus = userOrdersRepository.findByStatus();
+            List<UserOrders> userStock = userOrdersRepository.findStockExists();
+            //Integer userLinha = userOrdersRepository.selectLinha();
+            //System.out.println(userLinha + "teste 44444555");
             if (userOrders != null){
                 List<UserOrders> userFind = userOrdersRepository.findByCalculo();
 //                List<UserOrders> userStatus = userOrdersRepository.findByStatus();
@@ -57,16 +60,27 @@ public class UserOrdersController {
                     for (UserOrders cont: userFind) {
                         userOrdersRepository.updateRemainingValue(cont);
                         userOrdersRepository.updateStatus(cont);
+                        userOrdersRepository.atualizarBalance(cont.getUser(), cont.getId_stock());
                         }
                 }
                 if (!userStatus.isEmpty()){
-                    System.out.println("Cheguei");
                     for (UserOrders cont: userStatus) {
                         System.out.println("novo");
-                        userOrdersRepository.updateDollarBalance(cont.getUser());
+                        userOrdersRepository.updateDollarBalance(cont.getUser(), cont.getId_stock());
                         userOrdersRepository.updateStatus2(cont);
+
                     }
+                    //if (!userLinha.describeConstable().isEmpty()){
+
+                    //}
                 }
+
+//                if(userStock.isEmpty()){
+//                    userOrdersRepository.inserirStock();
+//                } else if(!userStock.isEmpty()) {
+//                    System.out.println("testeasasasasasassasasas");
+//                   // update caso compra
+//                }
 
             }
         }
