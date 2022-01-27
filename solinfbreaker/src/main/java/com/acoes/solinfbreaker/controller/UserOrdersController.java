@@ -48,32 +48,26 @@ public class UserOrdersController {
             List<UserOrders> userOrders =userOrdersRepository.findByTypeStock(dto.getId_stock());
             List<UserOrders> userStatus = userOrdersRepository.findByStatus();
             List<UserOrders> userStock = userOrdersRepository.findStockExists();
-            //Integer userLinha = userOrdersRepository.selectLinha();
-            //System.out.println(userLinha + "teste 44444555");
-            if (userOrders != null){
+            List<UserOrders> novoTeste = userOrdersRepository.novoTeste();
+            if (userOrders.isEmpty()){
                 List<UserOrders> userFind = userOrdersRepository.findByCalculo();
-//                List<UserOrders> userStatus = userOrdersRepository.findByStatus();
                 System.out.println(dto.getStatus());
                 if(!userFind.isEmpty() ){
-                    System.out.println("cheguei");
 
-                    for (UserOrders cont: userFind) {
+                    for (UserOrders cont: userFind) {//Esse for lista os matches
                         userOrdersRepository.updateRemainingValue(cont);
                         userOrdersRepository.updateStatus(cont);
                         userOrdersRepository.atualizarBalance(cont.getUser(), cont.getId_stock());
                         }
                 }
-                if (!userStatus.isEmpty()){
+                if (!userStatus.isEmpty()){//Atualiza o dollar ballance
                     for (UserOrders cont: userStatus) {
-                        System.out.println("novo");
-                        userOrdersRepository.updateDollarBalance(cont.getUser(), cont.getId_stock());
+                        userOrdersRepository.updateDollarBalance(cont.getUser());
                         userOrdersRepository.updateStatus2(cont);
 
                     }
-                    //if (!userLinha.describeConstable().isEmpty()){
-
-                    //}
                 }
+
 
 //                if(userStock.isEmpty()){
 //                    userOrdersRepository.inserirStock();
