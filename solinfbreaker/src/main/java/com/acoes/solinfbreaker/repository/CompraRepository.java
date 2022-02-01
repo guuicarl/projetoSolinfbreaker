@@ -126,7 +126,7 @@ public interface CompraRepository extends JpaRepository<UserOrders, Long > {
     // calaculo do Stock balance quando realizada a compra
 
     @Query (value = " select * from " +
-            " user_orders a, user_orders b where a.remaining_value > b.volume and a.type = 0 and a.id_stock = b.id_stock and a.id <> b.id and a.created_on > b.created_on ", nativeQuery = true)
+            " user_orders a, user_orders b where a.remaining_value > b.volume and a.type = 0 and a.id_stock = b.id_stock and a.id <> b.id order by a.created_on asc ", nativeQuery = true)
     List <UserOrders> fyndteste();
 
     @Modifying
