@@ -57,15 +57,15 @@ public class UserOrdersController {
             List<UserOrders> userStatus1 = compraRepository.findByStatus();
             List<UserOrders> userteste= compraRepository.fyndteste();
             List<UserOrders> userteste1= compraRepository.findtTeste1();
+            List<UserOrders> userFind = userOrdersRepository.findByCalculo();
             if (userOrders.isEmpty()){
-                List<UserOrders> userFind = userOrdersRepository.findByCalculo();
                 System.out.println(dto.getStatus());
                 if(!userteste1.isEmpty()) {
                     System.out.println("compra negativa");
                     for (UserOrders cont:userteste1)  {
-                        compraRepository.updateDollarBalance2(cont.getUser());
+                        compraRepository.updateDollarBalance2(cont, cont.getUser());
                         compraRepository.AtuaalizarValue2(cont);
-                        //compraRepository.updateStatus(cont);
+                        //compraRepository.updateStatus2();
                         compraRepository.atualizarBalance(cont.getId(),cont.getUser(), cont.getId_stock());
                     }
                 }
@@ -86,7 +86,7 @@ public class UserOrdersController {
                     for ( UserOrders cont: userteste ) {
                         compraRepository.updateDollarBalance(cont.getUser());
                         compraRepository.AtuaalizarValue(cont.getId_stock(), cont);
-                        compraRepository.updateStatus(cont);
+                        //compraRepository.updateStatus(cont);
                         compraRepository.atualizarBalance(cont.getId(), cont.getUser(), cont.getId_stock());
                     }
                 }
@@ -96,12 +96,11 @@ public class UserOrdersController {
                         userOrdersRepository.atualizarBalance2(cont.getUser(), cont.getId_stock());
                         userOrdersRepository.updateDollarBalance1(cont, cont.getUser());
                         userOrdersRepository.updateRemainingValue2(cont);
-                        userOrdersRepository.updateStatus(cont);
                         System.out.println(cont + "valorrrrrrrr do cont");
 
                     }
                 }
-
+                    userOrdersRepository.updateStatus();
             }
 
         //if(dto.getType() == 1){

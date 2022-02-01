@@ -93,22 +93,22 @@ public interface CompraRepository extends JpaRepository<UserOrders, Long > {
     @Query(value = "UPDATE user_orders SET status = 2 WHERE id = ?1 and remaining_value = 0", nativeQuery = true)
     int updateStatus(UserOrders id);
 
-//    @Modifying
-//    @Query(value = "UPDATE users_orders SET status = 3 WHERE id_order = ?1 and remaining_value = 0 ", nativeQuery = true)
-//    int updateStatus2(UserOrder id_order);
+    @Modifying
+    @Query(value = "UPDATE user_orders SET status = 2 WHERE id = 2 and remaining_value = 0 ", nativeQuery = true)
+    int updateStatus2();
 
     @Modifying
     @Query(value = "update users set dollar_balance = (select  u.dollar_balance - a.remaining_value  * uo.price  "   + " FROM user_orders a, user_orders uo " +
             "inner join users u on uo.id_user = u.id " +
-            "where a.status = 1  and a.id_stock = uo.id_stock and a.type = 1 and a.status = uo.status and  u.id = ?1) where id = ?1", nativeQuery = true)
+            "where a.status = 1  and a.id_stock = uo.id_stock and a.type = 1 and a.status = uo.status and a.created_on > uo.created_on and  u.id = ?1) where id = ?1", nativeQuery = true)
     int updateDollarBalance (User user);
 
     @Modifying
     @Query(value = " update users set dollar_balance = dollar_balance  - ( " +
-            " select  a.remaining_value * a.price    FROM user_orders a, user_orders uo " +
-            " inner join users u on uo.id_user = u.id " +
-            " where a.status = 1  and a.id_user = ?1 and a.type <> uo.type and a.id_stock = uo.id_stock) where id = ?1", nativeQuery = true)
-    int updateDollarBalance2 (User user);
+            " select a.remaining_value  * a.price " +
+            " fROM user_orders a, user_orders uo " +
+            " where  a.id_stock = uo.id_stock and a.type = 0  and uo.id <> a.id and a.id = ?1 and a.created_on > uo.created_on ) where id = ?2", nativeQuery = true)
+    int updateDollarBalance2 (UserOrders id, User user);
 
     // atauliza dinheiro do usuario quando comrpas
 
@@ -121,12 +121,12 @@ public interface CompraRepository extends JpaRepository<UserOrders, Long > {
             " AS ID FROM user_orders a, user_orders uo " +
             " inner join users u on uo.id_user = u.id " +
             " inner join user_stock_balances usb on u.id = usb.id_user " +
-            " WHERE a.type <> uo.type  and a.id_stock = uo.id_stock and a.id= ?1 ) where id_user = ?2 and id_stock = ?3", nativeQuery = true)
+            " WHERE a.type <> uo.type  and a.id_stock = uo.id_stock and a.id= ?1 and a.created_on > uo.created_on) where id_user = ?2 and id_stock = ?3", nativeQuery = true)
     int atualizarBalance(Long id, User id_user, Long id_stock);
     // calaculo do Stock balance quando realizada a compra
 
     @Query (value = " select * from " +
-            " user_orders a, user_orders b where a.remaining_value >= b.volume and a.type = 0 and a.id_stock = b.id_stock and a.id <> b.id", nativeQuery = true)
+            " user_orders a, user_orders b where a.remaining_value > b.volume and a.type = 0 and a.id_stock = b.id_stock and a.id <> b.id and a.created_on > b.created_on ", nativeQuery = true)
     List <UserOrders> fyndteste();
 
     @Modifying
@@ -134,12 +134,12 @@ public interface CompraRepository extends JpaRepository<UserOrders, Long > {
     int atualizarvalue(UserOrders id_order);
 
     @Query(value = "select * from " +
-            " user_orders a, user_orders b where  a.remaining_value <= b.volume and a.type = 0 and a.status = 1 and a.id_stock = b.id_stock and a.id <> b.id", nativeQuery = true)
+            " user_orders a, user_orders b where  a.remaining_value <= b.volume and a.type = 0 and a.status = 1 and a.id_stock = b.id_stock and a.id <> b.id and a.created_on > b.created_on", nativeQuery = true)
     List<UserOrders>findtTeste1();
 
     @Modifying
     @Query(value = " update user_orders  set remaining_value = (  select a.remaining_value  - b.remaining_value from " +
-            " user_orders a, user_orders b where  a.type =0 and a.id_stock = b.id_stock and a.id_stock = ?1 and a.id <> b.id) where id=?2 and type = 0",nativeQuery = true )
+            " user_orders a, user_orders b where  a.type =0 and a.id_stock = b.id_stock and a.id_stock = ?1 and a.id <> b.id and a.created_on > b.created_on) where id=?2 and type = 0",nativeQuery = true )
     int AtuaalizarValue(Long id_stock, UserOrders id);
 
     @Modifying

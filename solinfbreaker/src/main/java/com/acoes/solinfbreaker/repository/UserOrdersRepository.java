@@ -25,12 +25,9 @@ List<UserOrders> findByTypeStock(Long id_stock);//procurar ordens de venda abert
 
 
     @Modifying
-    @Query(value = "UPDATE user_orders SET status = 2 WHERE id = ?1 and remaining_value = 0", nativeQuery = true)
-    int updateStatus(UserOrders id);
+    @Query(value = "UPDATE user_orders SET status = 2 WHERE remaining_value = 0", nativeQuery = true)
+    int updateStatus();
 
-    @Modifying
-    @Query(value = "UPDATE user_orders SET status = 3 WHERE id = ?1 and remaining_value = 0 ", nativeQuery = true)
-    int updateStatus2(UserOrders id);
 
     @Modifying
     @Query(value = "update users set dollar_balance = (select a.volume  * uo.price + u.dollar_balance " +
@@ -43,7 +40,7 @@ List<UserOrders> findByTypeStock(Long id_stock);//procurar ordens de venda abert
     @Query(value = "update users set dollar_balance =  dollar_balance +( " +
             "select a.remaining_value  * a.price " +
             "fROM user_orders a, user_orders uo " +
-            "where  a.id_stock = uo.id_stock and a.type = 1  and uo.id <> a.id and a.id = ?1 " +
+            "where  a.id_stock = uo.id_stock and a.type = 1  and uo.id <> a.id and a.id = ?1  and a.type <> uo.type " +
             ") where id = ?2", nativeQuery = true)
     int updateDollarBalance1 (UserOrders id, User user);
 
@@ -84,12 +81,12 @@ int selecionarSub();
 
 
 
-    @Query(value = " select * from " +
-            " user_orders a, user_orders b where a.remaining_value < b.volume and a.type <>b.type and a.id_stock = b.id_stock and a.id <> b.id", nativeQuery = true)
+    @Query(value = "select * from " +
+            " user_orders a, user_orders b where a.remaining_value <= b.volume and a.type = 1 and a.id_stock = b.id_stock and a.id <> b.id  and a.status <>2 and a.type <> b.type order by a.created_on asc", nativeQuery = true)
     List<UserOrders>testando1();
 
     @Modifying
-    @Query(value = "update user_orders  set remaining_value = 0 where id=?1 and type = 1", nativeQuery = true)
+    @Query(value = "update user_orders  set remaining_value = 0 where id=?1 and type = 1 ", nativeQuery = true)
     int updateRemainingValue2(UserOrders id);//Ele atualiza remaining value quando há match
 
     @Modifying
@@ -98,7 +95,7 @@ int selecionarSub();
             " AS ID FROM user_orders a " +
             " Inner join users u on a.id_user = u.id " +
             " inner join user_stock_balances usb on u.id = usb.id_user " +
-            " WHERE  a.id_stock = usb.id_stock and a.id_user = ?1 and a.id_stock = ?2 " +
+            "  WHERE a.id_user = ?1 and a.id_stock = ?2 and usb.id_stock = ?2" +
             " ) where id_user = ?1 and id_stock = ?2",nativeQuery = true)
     int atualizarBalance2(User id_user, Long id_stock);
 
