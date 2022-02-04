@@ -1,12 +1,13 @@
 package com.acoes.solinfbreaker.controller;
 
 
+import com.acoes.solinfbreaker.dto.StockDto;
 import com.acoes.solinfbreaker.model.Stocks;
 import com.acoes.solinfbreaker.repository.StocksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,4 +27,19 @@ public class StocksController {
     public List<Stocks> listar(){
         return stocksRepository.findAll();
     }
+
+    @PostMapping("/teste")
+    public ResponseEntity<?> teste(@RequestBody StockDto stockDto){
+        Stocks stock = stocksRepository.findById(stockDto.getId()).orElseThrow();
+        if(stockDto.getAsk_max() != null) {
+            stock.setAsk_max(stockDto.getAsk_max());
+            stock.setAsk_min(stockDto.getAsk_min());
+        }
+        if (stockDto.getBid_min() != null) {
+            stock.setBid_max(stockDto.getBid_max());
+            stock.setBid_min(stockDto.getBid_min());
+        }
+        return new ResponseEntity<>(stocksRepository.save(stock), HttpStatus.CREATED);
+    }
+
 }
