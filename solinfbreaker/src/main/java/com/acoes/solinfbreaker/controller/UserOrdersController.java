@@ -20,6 +20,7 @@ import reactor.core.publisher.Mono;
 import java.sql.*;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 public class UserOrdersController {
 
@@ -37,6 +38,11 @@ public class UserOrdersController {
     @GetMapping("/orders")
     public List<UserOrders> listar(){
         return userOrdersRepository.findAll();
+    }
+
+    @GetMapping("/uo")
+    public List<UserOrders> listarOrders(){
+        return  userOrdersRepository.listOrders();
     }
 
     @PostMapping("/orders")
@@ -90,7 +96,7 @@ public class UserOrdersController {
                         compraRepository.RemainigPO(cont, cont.getUser());
                         compraRepository.atualizarBalancePO(cont.getId(), cont.getUser(), cont.getId_stock());
                     }
-                    userOrdersRepository.updateStatus();
+                    //userOrdersRepository.updateStatus();
                 }
                 if (!teste1.isEmpty()){
                     System.out.println("venda negativa");

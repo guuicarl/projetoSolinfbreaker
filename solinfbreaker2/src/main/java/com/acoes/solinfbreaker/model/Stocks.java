@@ -1,5 +1,8 @@
 package com.acoes.solinfbreaker.model;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -16,7 +19,11 @@ public class Stocks {
     private Double ask_max;
     private Double bid_min;
     private Double bid_max;
+    @CreationTimestamp
+    @Column(name = "created_on")
     private Timestamp created_on;
+    @UpdateTimestamp
+    @Column(name = "updated_on")
     private Timestamp updated_on;
 
 

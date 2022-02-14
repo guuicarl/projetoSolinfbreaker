@@ -18,10 +18,8 @@ public class StockDto {
     private Double ask_max;
     private Double bid_min;
     private Double bid_max;
-    private Timestamp created_on;
-    private Timestamp updated_on;
 
-    public StockDto(Long id, String stock_symbol, String stock_name, Double ask_min, Double ask_max, Double bid_min, Double bid_max, Timestamp created_on, Timestamp updated_on) {
+    public StockDto(Long id, String stock_symbol, String stock_name, Double ask_min, Double ask_max, Double bid_min, Double bid_max) {
         this.id = id;
         this.stock_symbol = stock_symbol;
         this.stock_name = stock_name;
@@ -29,10 +27,8 @@ public class StockDto {
         this.ask_max = ask_max;
         this.bid_min = bid_min;
         this.bid_max = bid_max;
-        this.created_on = created_on;
-        this.updated_on = updated_on;
     }
     public StockDto tranformaParaObjeto1(){
-        return new StockDto (id, stock_symbol, stock_name, ask_min, ask_max, bid_min, bid_max, created_on, updated_on);
+        return new StockDto (id, stock_symbol, stock_name, ask_min, ask_max, bid_min, bid_max);
     }
 }

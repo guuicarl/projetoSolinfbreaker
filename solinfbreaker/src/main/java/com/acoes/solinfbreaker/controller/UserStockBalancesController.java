@@ -7,6 +7,7 @@ import com.acoes.solinfbreaker.model.UserStockBalances;
 import com.acoes.solinfbreaker.repository.UserStockBalancesRepository;
 import com.acoes.solinfbreaker.repository.UsersRepository;
 import com.acoes.solinfbreaker.service.StockService;
+import com.acoes.solinfbreaker.service.UserStockBalanceService;
 import com.acoes.solinfbreaker.service.UserStockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 public class UserStockBalancesController {
 
@@ -29,6 +31,8 @@ public class UserStockBalancesController {
     private UsersRepository usersRepository;
     @Autowired
     private UserStockService userStockService;
+    @Autowired
+    private UserStockBalanceService service;
 
     @GetMapping("/teste")
     public List<UserStockBalances> listar(){
@@ -58,6 +62,22 @@ public class UserStockBalancesController {
         return new ResponseEntity<>(userStockBalances,HttpStatus.CREATED);
         //UserStockBalances userStockBalances = dto.tranformaParaObjeto(user);
 
+    }
+
+    @GetMapping("/wallet")
+    public List<UserStockBalances> listarCarteira(){
+        return  userStockBalancesRepository.listCarteira();
+    }
+
+    @GetMapping("/{stock_name}")
+    public ResponseEntity<List<UserStockBalances>> getBalance(@PathVariable("stock_name") String stock_name) {
+        try {
+            return ResponseEntity.ok().body(service.getStock(stock_name));
+        }  catch (Exception e) {
+            if(e.getMessage().equals("FAZENDA_NOT_FOUND"))
+                return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 

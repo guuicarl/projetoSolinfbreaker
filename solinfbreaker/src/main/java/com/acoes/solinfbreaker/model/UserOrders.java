@@ -2,6 +2,8 @@ package com.acoes.solinfbreaker.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -28,7 +30,11 @@ public class UserOrders {
 
 
 
+    @CreationTimestamp
+    @Column(name = "created_on")
     private Timestamp created_on;
+    @UpdateTimestamp
+    @Column(name = "updated_on")
     private Timestamp updated_on;
 
     @ManyToOne
@@ -49,8 +55,6 @@ public class UserOrders {
         this.type = type;
         this.status = status;
         this.remaining_value = remaining_value;
-        this.created_on = Timestamp.valueOf(LocalDateTime.now());
-        this.updated_on = Timestamp.valueOf(LocalDateTime.now());
     }
 
     @Override

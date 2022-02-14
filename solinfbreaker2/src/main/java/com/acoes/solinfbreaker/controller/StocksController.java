@@ -4,6 +4,7 @@ package com.acoes.solinfbreaker.controller;
 import com.acoes.solinfbreaker.dto.StockDto;
 import com.acoes.solinfbreaker.model.Stocks;
 import com.acoes.solinfbreaker.repository.StocksRepository;
+import com.acoes.solinfbreaker.service.StocksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +13,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 public class StocksController {
     @Autowired
     private StocksRepository stocksRepository;
+    @Autowired
+    private StocksService service;
 
     @GetMapping("/stocks/{id}")
     public Optional<Stocks> obterStock(@PathVariable(value = "id")Long id) throws Exception {
         Thread.sleep(3000);
         return stocksRepository.findById(id);
+    }
+
+    @GetMapping("/{stock_name}")
+    public ResponseEntity<List<Stocks>> getStocks(@PathVariable("stock_name") String stock_name) {
+        try {
+            return ResponseEntity.ok().body(service.getStock(stock_name));
+        }  catch (Exception e) {
+            if(e.getMessage().equals("FAZENDA_NOT_FOUND"))
+                return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/updated")
+    public List<Stocks> listar10(){
+        return stocksRepository.findStocks();
     }
 
     @GetMapping("/stocks")

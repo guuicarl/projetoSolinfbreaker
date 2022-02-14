@@ -2,6 +2,8 @@ package com.acoes.solinfbreaker.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,13 +22,16 @@ public class UserStockBalances implements Serializable {
     private String stock_symbol;
     private String stock_name;
     private Long volume;
+    @CreationTimestamp
+    @Column(name = "created_on")
     private Timestamp created_on;
+    @UpdateTimestamp
+    @Column(name = "updated_on")
     private Timestamp updated_on;
 
 
     public UserStockBalances() {
-        this.created_on = Timestamp.valueOf(LocalDateTime.now());
-        this.updated_on = Timestamp.valueOf(LocalDateTime.now());
+
     }
 
     public UserStockBalances(UserStockBalance id, String stock_symbol, String stock_name, Long volume){
@@ -34,8 +39,7 @@ public class UserStockBalances implements Serializable {
         this.stock_symbol = stock_symbol;
         this.stock_name = stock_name;
         this.volume = volume;
-        this.created_on = Timestamp.valueOf(LocalDateTime.now());
-        this.updated_on = Timestamp.valueOf(LocalDateTime.now());
+
     }
 
 }

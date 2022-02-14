@@ -35,7 +35,7 @@ public interface CompraRepository extends JpaRepository<UserOrders, Long > {
 
 
     @Modifying
-    @Query(value = "update user_stock_balances set volume = volume + (select a.volume - uo.remaining_value " +
+    @Query(value = "update user_stock_balances set volume = volume + (select uo.remaining_value " +
             " AS ID FROM user_orders a, user_orders uo " +
             " inner join users u on uo.id_user = u.id " +
             " inner join user_stock_balances usb on u.id = usb.id_user " +
@@ -62,9 +62,9 @@ public interface CompraRepository extends JpaRepository<UserOrders, Long > {
     List<UserOrders> findtTeste1();
 
     @Modifying
-    @Query(value = " update user_orders  set remaining_value = ( select a.remaining_value  - uo.volume  from " +
+    @Query(value = " update user_orders  set remaining_value = ( select uo.remaining_value  - a.volume  from " +
             " user_orders a, user_orders uo inner join users u on uo.id_user = u.id " +
-            " where a.type = 0 and a.id_stock = uo.id_stock  and uo.id = ?1 and uo.id_user = ?2 order by a.created_on asc fetch first 1 rows only) where id=?1 and type = 0", nativeQuery = true)
+            " where a.type <> uo.type and a.id_stock = uo.id_stock  and uo.id = ?1 and uo.id_user = ?2 order by a.created_on asc fetch first 1 rows only) where id=?1 and type = 0", nativeQuery = true)
     int RemainigPO(UserOrders id, User user );
 
     @Modifying

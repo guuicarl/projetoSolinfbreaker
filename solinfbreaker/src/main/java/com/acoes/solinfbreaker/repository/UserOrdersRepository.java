@@ -88,5 +88,7 @@ public interface UserOrdersRepository extends JpaRepository<UserOrders, Long> {
     @Query(value = "select MIN(price) from user_orders where id_stock = ?1 and status = 1 and type = 0", nativeQuery = true)
     Double getBidMin(Long id_stock);
 
+    @Query(value = "select * from user_orders uo where id_user=1", nativeQuery = true)
+    List<UserOrders> listOrders();
 
 }

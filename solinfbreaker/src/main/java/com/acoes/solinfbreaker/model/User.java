@@ -1,6 +1,9 @@
 package com.acoes.solinfbreaker.model;
 
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -18,7 +21,11 @@ public class User {
     private String password;
     private Double dollar_balance;
     private boolean enable;
+    @CreationTimestamp
+    @Column(name = "created_on")
     private Timestamp created_on;
+    @UpdateTimestamp
+    @Column(name = "updated_on")
     private Timestamp updated_on;
 
     public Long getId() {
@@ -90,8 +97,4 @@ public class User {
         return Objects.hash(id, username, password, dollar_balance, enable, created_on, updated_on);
     }
 
-    public User(){
-        this.created_on = Timestamp.valueOf(LocalDateTime.now());
-        this.updated_on = Timestamp.valueOf(LocalDateTime.now());
-    }
 }
