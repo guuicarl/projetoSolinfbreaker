@@ -16,7 +16,7 @@ public interface UserOrdersRepository extends JpaRepository<UserOrders, Long> {
     @Query(value = "SELECT * FROM user_orders WHERE type = 1 and id_stock = ?1 and status = 1", nativeQuery = true)
     List<UserOrders> findByTypeStock(Long id_stock);//procurar ordens de venda abertas
 
-    @Query(value = "SELECT * FROM user_orders a, user_orders b  where a.type <> b.type  and a.remaining_value > b.volume and a.type = 1  and a.id_stock = b.id_stock and a.status = b.status ", nativeQuery = true)
+    @Query(value = "SELECT * FROM user_orders a, user_orders b  where a.type <> b.type  and a.remaining_value >= b.volume and a.type = 1  and a.id_stock = b.id_stock and a.status = b.status and a.status =1 ", nativeQuery = true)
     List<UserOrders> findByCalculo();//Pegando matches
 
     @Modifying

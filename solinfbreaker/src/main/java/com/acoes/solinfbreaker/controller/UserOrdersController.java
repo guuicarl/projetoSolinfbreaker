@@ -8,6 +8,7 @@ import com.acoes.solinfbreaker.repository.CompraRepository;
 import com.acoes.solinfbreaker.repository.UserOrdersRepository;
 import com.acoes.solinfbreaker.repository.UsersRepository;
 import com.acoes.solinfbreaker.service.StockService;
+import com.acoes.solinfbreaker.service.UserOrderService;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,8 @@ public class UserOrdersController {
     private WebClient webClient;
     @Autowired
     private StockService stockService;
+    @Autowired
+    private UserOrderService userOrderService;
 
     @GetMapping("/orders")
     public List<UserOrders> listar(){
@@ -53,61 +56,10 @@ public class UserOrdersController {
         if(dollar >= mult) {//verifica se o usuario tem dinheiro na carteira pra criar uma ordem de compra
             UserOrders userOrders = userOrdersRepository.save(dto.tranformaParaObjeto1(user));
             stockService.teste1(userOrders.getId_stock(), token);
+            userOrderService.vender();
             return new ResponseEntity<>(userOrders, HttpStatus.CREATED);
         } else {
             System.out.println("Ordem não criada, valor insuficiente");
-        }
-        return null;
-    }
-
-    @PostMapping("/venda")
-     public UserOrders vender(@RequestBody UserOrdersDto dto) throws SQLException {
-
-        if(dto.getType() == 0){
-            List<UserOrders> userOrders =userOrdersRepository.findByTypeStock(dto.getId_stock());
-            List<UserOrders> teste1 = userOrdersRepository.testando1();
-            List<UserOrders> userteste= compraRepository.fyndteste();
-            List<UserOrders> userteste1= compraRepository.findtTeste1();
-            List<UserOrders> userFind = userOrdersRepository.findByCalculo();
-            if (userOrders.isEmpty()){
-                System.out.println(dto.getStatus());
-                if(!userteste1.isEmpty()) {
-                    System.out.println("compra negativa");
-                    for (UserOrders cont:userteste1)  {
-                        System.out.println(dto.getId());
-                        compraRepository.updateDollarBalanceNE(cont, cont.getUser());
-                        compraRepository.RemainingNE(cont);
-                        compraRepository.atualizarBalanceNE(cont.getId(),cont.getUser(), cont.getId_stock());
-                    }
-                    //userOrdersRepository.updateStatus2();
-                }
-                if(!userFind.isEmpty() ){
-                    System.out.println("venda positiva");
-                    for (UserOrders cont: userFind) {
-                        userOrdersRepository.updateDollarBalance(cont.getUser());
-                        userOrdersRepository.updateRemainingValue(cont.getId_stock(),cont);
-                        userOrdersRepository.atualizarBalance(cont.getUser(), cont.getId_stock());
-                    }
-                }
-                if(!userteste.isEmpty()){
-                    System.out.println("compra positiva");
-                    for ( UserOrders cont: userteste ) {
-                        compraRepository.updateDollarBalancePO(cont.getUser(), cont);
-                        compraRepository.RemainigPO(cont, cont.getUser());
-                        compraRepository.atualizarBalancePO(cont.getId(), cont.getUser(), cont.getId_stock());
-                    }
-                    //userOrdersRepository.updateStatus();
-                }
-                if (!teste1.isEmpty()){
-                    System.out.println("venda negativa");
-                    for (UserOrders cont: teste1) {
-                        userOrdersRepository.RemainingNE(cont.getUser(), cont.getId_stock());
-                        userOrdersRepository.updateDollarBalanceNE(cont, cont.getUser());
-                        userOrdersRepository.updateRemainingValue2(cont);
-                    }
-                }
-                userOrdersRepository.updateStatus2();
-            }
         }
         return null;
     }
