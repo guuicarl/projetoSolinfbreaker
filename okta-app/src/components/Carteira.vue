@@ -48,7 +48,7 @@
                       "
                       v-model="teste"
                     >
-                      <option>---- Select a stock ----</option>
+                      <option selected>---- Select a stock ----</option>
                       <option v-for="wallet in wallets" :key="wallet" v-on:click="getMoeda()">{{wallet.stock_name}}</option>
                     </select>
                   </div>
@@ -80,6 +80,138 @@
                     />
                   </div>
 
+                  <div class="col-span-1">
+                    <label
+                      for="email-address"
+                      class="block text-sm font-medium text-gray-700"
+                      v-if="mostrar"
+                      >Bid min:
+                    </label>
+                    <input
+                    v-model="stock[0].bid_min"
+                      type="text"
+                      class="
+                        mt-1
+                        focus:ring-indigo-500 focus:border-indigo-500
+                        block
+                        w-full
+                        shadow-sm
+                        lg:text-lg
+                        border border-gray-500
+                        rounded-md
+                      "
+                      v-if="mostrar"
+                      readonly
+                      v-money="money"
+                    />
+                  </div>
+
+                  <div class="col-span-1">
+                    <label
+                      for="email-address"
+                      class="block text-sm font-medium text-gray-700"
+                      v-if="mostrar"
+                      >Bid max:
+                    </label>
+                    <input
+                    v-model="stock[0].bid_max"
+                      type="text"
+                      class="
+                        mt-1
+                        focus:ring-indigo-500 focus:border-indigo-500
+                        block
+                        w-full
+                        shadow-sm
+                        lg:text-lg
+                        border border-gray-500
+                        rounded-md
+                      "
+                      v-if="mostrar"
+                      readonly
+                      v-money="money"
+                    />
+                  </div>
+
+                  <div class="col-span-1">
+                    <label
+                      for="email-address"
+                      class="block text-sm font-medium text-gray-700"
+                      v-if="mostrar"
+                      >Ask min:
+                    </label>
+                    <input
+                    v-model="stock[0].ask_min"
+                      type="text"
+                      class="
+                        mt-1
+                        focus:ring-indigo-500 focus:border-indigo-500
+                        block
+                        w-full
+                        shadow-sm
+                        lg:text-lg
+                        border border-gray-500
+                        rounded-md
+                      "
+                      v-if="mostrar"
+                      readonly
+                      v-money="money"
+                    />
+                  </div>
+
+                  <div class="col-span-1">
+                    <label
+                      for="email-address"
+                      class="block text-sm font-medium text-gray-700"
+                      v-if="mostrar"
+                      >Ask max:
+                    </label>
+                    <input
+                    v-model="stock[0].ask_max"
+                    v-money="money"
+                      type="text"
+                      class="
+                        mt-1
+                        focus:ring-indigo-500 focus:border-indigo-500
+                        block
+                        w-full
+                        shadow-sm
+                        lg:text-lg
+                        border border-gray-500
+                        rounded-md
+                      "
+                      v-if="mostrar"
+                      readonly
+                    />
+                  </div>
+
+                  <div class="col-span-1">
+                    <label
+                      for="email-address"
+                      class="block text-sm font-medium text-gray-700"
+                      v-if="mostrar"
+                      >Valor estimado: 
+                    </label>
+                    <input
+                      v-model="valor"
+                      type="text"
+                      class="
+                        mt-1
+                        focus:ring-indigo-500 focus:border-indigo-500
+                        block
+                        w-full
+                        shadow-sm
+                        lg:text-lg
+                        border border-gray-500
+                        rounded-md
+                      "
+                      v-if="mostrar"
+                      readonly
+                      v-money="money"
+                    />
+                  </div>
+
+                  
+
                   <div class="col-span-6">
                     <label
                       for="street-address"
@@ -101,7 +233,7 @@
                         border border-gray-500
                         rounded-md
                       "
-                      v-model="wallets[0].id.user.dollar_balance"
+                      v-model="this.dollar"
                       v-money="money"
                       readonly
                     />
@@ -147,7 +279,13 @@ import {VMoney} from 'v-money'
 export default {
     data: function () {
     return {
-      teste : "",
+      users:[],
+      id: "",
+      stock: [{
+      }],
+      valor: "",
+      dollar: "",
+      teste : "---- Select a stock ----",
       wallets: [{
 		"id": {
 			"id_stock": 0,
@@ -188,11 +326,36 @@ export default {
         this.claims = await this.$auth.getUser();
         let accessToken = this.$auth.getAccessToken();
         try {
-          let response = await axios.get("http://localhost:8082/wallet", {
+        let response = await axios.get(
+          `http://localhost:8082/users`,
+
+          {
+            headers: { Authorization: "Bearer " + accessToken },
+          }
+        );
+        this.users = response.data;
+        console.log("olha pra baixo");
+        console.log(this.users);
+      } catch (error) {
+        this.users = `${error}`;
+      }
+        try {
+          console.log(this.claims.name)
+          console.log(this.users)
+          var id = 0;
+          for(var i = 0; i < this.users.length;i++){
+            if(this.claims.name == this.users[i].username){
+              id = this.users[i].id
+              this.dollar = this.users[i].dollar_balance
+              console.log('aqui eu passo' + this.users[i].dollar_balance)
+            }
+          }
+          let response = await axios.get(`http://localhost:8082/wallet/${id}`, {
             headers: { Authorization: "Bearer " + accessToken },
           });
           this.wallets = response.data;
-          console.log(this.wallets[0].id.user.dollar_balance)
+          console.log(this.wallets)
+          console.log(this.claims.name)
         } catch (error) {
           this.wallets = `${error}`;
         }
@@ -203,16 +366,36 @@ export default {
       if (this.$root.authenticated) {
         this.claims = await this.$auth.getUser();
         let accessToken = this.$auth.getAccessToken();
+        var id = 0;
+          for(var i = 0; i < this.users.length;i++){
+            if(this.claims.name == this.users[i].username){
+              id = this.users[i].id
+              this.dollar = this.users[i].dollar_balance
+              console.log('aqui eu passo' + this.users[i].dollar_balance)
+            }
+          }
         try {
-          let response = await axios.get(`http://localhost:8082/${this.teste}`, {
+          let response = await axios.get(`http://localhost:8082/${id}/${this.teste}`, {
             headers: { Authorization: "Bearer " + accessToken },
           });
           this.walletUser = response.data;
-          console.log(this.walletUser[0].volume)
+          console.log(this.walletUser)
+          console.log('bananaaaaaas' )
         } catch (error) {
           this.walletUser = `${error}`;
         }
+        try {
+          let response = await axios.get(`http://localhost:8085/${this.teste}`, {
+            headers: { Authorization: "Bearer " + accessToken },
+          });
+          this.stock = response.data;
+          console.log("id: " + this.stock[0].id + " Symbol: " + this.stock[0].stock_symbol + " Nome: " + this.stock[0].stock_name) 
+        } catch (error) {
+          this.stock = `${error}`;
+        }
       }
+      this.valor = this.walletUser[0].volume * this.stock[0].ask_min
+      console.log(this.claims.name)
     }
   },
       directives: {money: VMoney}

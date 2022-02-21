@@ -285,6 +285,7 @@ export default {
     return {
       claims: "",
       welcome: "",
+      users: [],
       stocks: [],
       orders: [],
       money: {
@@ -297,6 +298,7 @@ export default {
     };
   },
   created() {
+    this.user();
     this.setup();
   },
   methods: {
@@ -306,6 +308,7 @@ export default {
         let accessToken = this.$auth.getAccessToken();
         console.log(`Authorization: Bearer ${accessToken}`);
         console.log("testando");
+        console.log(this.users)
         try {
           let response = await axios.get("http://localhost:8082/", {
             headers: { Authorization: "Bearer " + accessToken },
@@ -324,7 +327,14 @@ export default {
           this.stocks = `${error}`;
         }
         try {
-          let response = await axios.get("http://localhost:8082/uo", {
+          var id = 0;
+          for(var k = 0; k < this.users.length;k++){
+            if(this.claims.name == this.users[k].username){
+              id = this.users[k].id
+              console.log('aqui eu passo' + this.users[k].id)
+            }
+          }
+          let response = await axios.get(`http://localhost:8082/uo/${id}`, {
             headers: { Authorization: "Bearer " + accessToken },
           });
           this.orders = response.data;
@@ -343,6 +353,53 @@ export default {
             this.orders[i].type = "Venda"
           }
         }
+      }
+    },
+    async user() {
+      var teste = false;
+      this.claims = await Object.entries(await this.$auth.getUser()).map(
+        (entry) => ({ claim: entry[0], value: entry[1] })
+      );
+      let accessToken = this.$auth.getAccessToken();
+      try {
+        let response = await axios.get(
+          `http://localhost:8082/users`,
+
+          {
+            headers: { Authorization: "Bearer " + accessToken },
+          }
+        );
+        this.users = response.data;
+        console.log("olha pra baixo");
+        console.log(this.users);
+      } catch (error) {
+        this.users = `${error}`;
+      }
+      for (var i = 0; i < this.users.length; i++) {
+        if (this.claims[1].value == this.users[i].username) {
+          teste = true;
+        } else {
+          console.log("Usurio ta ai besta");
+        }
+      }
+      if (teste == false) {
+        try {
+          await axios.post(
+            "http://localhost:8082/users",
+            {
+              username: this.claims[1].value,
+              password: "teste1234",
+              dollar_balance: 10000,
+              enabled: true,
+            },
+            {
+              headers: { Authorization: "Bearer " + accessToken },
+            }
+          );
+        } catch (error) {
+          console.log(error);
+        }
+        console.log(this.claims);
       }
     },
   },

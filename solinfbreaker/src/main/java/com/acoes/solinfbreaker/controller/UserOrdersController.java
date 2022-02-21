@@ -4,6 +4,7 @@ import com.acoes.solinfbreaker.dto.StockDto;
 import com.acoes.solinfbreaker.dto.UserOrdersDto;
 import com.acoes.solinfbreaker.model.User;
 import com.acoes.solinfbreaker.model.UserOrders;
+import com.acoes.solinfbreaker.model.UserStockBalances;
 import com.acoes.solinfbreaker.repository.CompraRepository;
 import com.acoes.solinfbreaker.repository.UserOrdersRepository;
 import com.acoes.solinfbreaker.repository.UsersRepository;
@@ -43,9 +44,15 @@ public class UserOrdersController {
         return userOrdersRepository.findAll();
     }
 
-    @GetMapping("/uo")
-    public List<UserOrders> listarOrders(){
-        return  userOrdersRepository.listOrders();
+    @GetMapping("/uo/{id_user}")
+    public ResponseEntity<List<UserOrders>> getUser(@PathVariable("id_user") Long id_user) {
+        try {
+            return ResponseEntity.ok().body(userOrderService.getUser(id_user));
+        }  catch (Exception e) {
+            if(e.getMessage().equals("FAZENDA_NOT_FOUND"))
+                return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/orders")

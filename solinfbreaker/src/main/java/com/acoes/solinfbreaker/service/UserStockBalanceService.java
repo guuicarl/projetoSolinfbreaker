@@ -11,8 +11,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserStockBalanceService {
     private final UserStockBalancesRepository repository;
-    public List<UserStockBalances> getStock(String stock_name) throws Exception {
-        List<UserStockBalances> userStockBalances = repository.listCarteira2(stock_name);
+    public List<UserStockBalances> getStock(Long id_user, String stock_name) throws Exception {
+        List<UserStockBalances> userStockBalances = repository.listCarteira2(id_user, stock_name);
+        return userStockBalances;
+    }
+
+    public List<UserStockBalances> getUser(Long id_user) throws Exception {
+        List<UserStockBalances> userStockBalances = repository.listCarteira(id_user);
         return userStockBalances;
     }
 }

@@ -50,7 +50,7 @@
                       v-model="name"
                       @click="getMoeda"
                     >
-                      <option>---- Select a stock ----</option>
+                      <option selected>---- Select a stock ----</option>
                       <option v-for="stock in stocksName" :key="stock">{{stock.stock_name}}</option>
                     </select>
                   </div>
@@ -207,16 +207,16 @@ export default {
   data: function () {
     return {
       stocksName: [],
-      name: '',
+      name: '---- Select a stock ----',
       name1: '',
       bid: '',
       sell: '',
       volume: '',
       volume2: '',
       total: '',
-      type: '',
+      type: '---- Select a type ----',
       teste: [],
-      usuario: 1,
+      usuario: '',
       money: {
           decimal: ',',
           thousands: '.',
@@ -228,7 +228,6 @@ export default {
   },
   created() {
     this.setup();
-    this.getMoeda;
   },
   methods: {
     async setup() {
@@ -244,6 +243,26 @@ export default {
         } catch (error) {
           this.stocksName = `${error}`;
         }
+        try {
+        let response = await axios.get(
+          `http://localhost:8082/users`,
+
+          {
+            headers: { Authorization: "Bearer " + accessToken },
+          }
+        );
+        this.users = response.data;
+        console.log("olha pra baixo");
+        console.log(this.users);
+          for(var k = 0; k < this.users.length;k++){
+            if(this.claims.name == this.users[k].username){
+              this.usuario = this.users[k].id
+              console.log(this.usuario)
+            }
+          }
+      } catch (error) {
+        this.users = `${error}`;
+      }
       }
     },
     async getMoeda() {
@@ -281,26 +300,6 @@ export default {
         }
       }
     },
-
-    async criarOrdemVenda() {
-      if (this.$root.authenticated) {
-        this.claims = await this.$auth.getUser();
-        let accessToken = this.$auth.getAccessToken();
-        try {
-          await axios.post(`http://localhost:8082/orders`, 
-          {id_user: this.usuario, id_stock: this.teste[0].id, stock_symbol: this.teste[0].stock_symbol, stock_name: this.name, volume: this.volume, price: this.bid, type: 0, status: 1, remaining_value: this.volume},
-          {
-            headers: { Authorization: "Bearer " + accessToken },
-          })
-          .then(() => {
-            window.alert("Cadastrado com sucesso")
-          })
-          console.log("id: " + this.teste[0].id + " Symbol: " + this.teste[0].stock_symbol + " Nome: " + this.name + " Volume: " + this.volume  + " Preço: " + this.bid) 
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    }
   },
         directives: {money: VMoney}
 };

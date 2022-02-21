@@ -16,12 +16,13 @@ public interface UserOrdersRepository extends JpaRepository<UserOrders, Long> {
     @Query(value = "SELECT * FROM user_orders WHERE type = 1 and id_stock = ?1 and status = 1", nativeQuery = true)
     List<UserOrders> findByTypeStock(Long id_stock);//procurar ordens de venda abertas
 
-    @Query(value = "SELECT * FROM user_orders a, user_orders b  where a.type <> b.type  and a.remaining_value >= b.volume and a.type = 1  and a.id_stock = b.id_stock and a.status = b.status and a.status =1 ", nativeQuery = true)
+    @Query(value = " SELECT * FROM user_orders a, user_orders b " +
+            " where a.type <> b.type  and a.remaining_value >= b.remaining_value and a.type = 1  and a.id_stock = b.id_stock and a.status = b.status and a.status <>2 and b.status <> 2 and a.price <= b.price order by a.created_on asc ", nativeQuery = true)
     List<UserOrders> findByCalculo();//Pegando matches
 
     @Modifying
-    @Query(value = "update user_orders  set remaining_value = (SELECT  a.remaining_value - b.volume AS ID FROM user_orders a, user_orders b  WHERE a.type =1  and a.id_stock = b.id_stock and a.id_stock = ?1 and a.id <> b.id fetch first 1 rows only) where type =  1 AND id=?2", nativeQuery = true)
-    int updateRemainingValue(Long id_stock, UserOrders id);//Ele atualiza remaining value quando há match
+    @Query(value = "update user_orders  set remaining_value = (SELECT  a.remaining_value - b.remaining_value AS ID FROM user_orders a, user_orders b  WHERE a.type =1  and a.id_stock = b.id_stock and a.id <> b.id and b.remaining_value <> 0 and a.id = ?1 fetch first 1 rows only) where type =  1 AND id=?1", nativeQuery = true)
+    int updateRemainingValue(UserOrders id);//Ele atualiza remaining value quando há match
 
 
     @Modifying
@@ -34,7 +35,7 @@ public interface UserOrdersRepository extends JpaRepository<UserOrders, Long> {
 
 
     @Modifying
-    @Query(value = "update users set dollar_balance = ( select a.volume * a.price + u.dollar_balance " +
+    @Query(value = "update users set dollar_balance = ( select a.remaining_value * uo.price + u.dollar_balance " +
             " FROM user_orders a, user_orders uo " +
             " inner join users u on uo.id_user = u.id " +
             " where uo.status = 1  and a.id_stock = uo.id_stock and uo.type = 1 and uo.id <> a.id and uo.id_user = ?1 fetch first 1 rows only) where id = ?1", nativeQuery = true)
@@ -58,8 +59,9 @@ public interface UserOrdersRepository extends JpaRepository<UserOrders, Long> {
     int atualizarBalance(User user, Long id_stock);
 
 
-    @Query(value = "select * from " +
-            " user_orders a, user_orders b where a.remaining_value < b.volume and  a.type = 1 and a.id_stock = b.id_stock and a.id <> b.id  and a.status <>2 and a.type <> b.type order by a.created_on asc", nativeQuery = true)
+    @Query(value = "select * from" +
+            " user_orders a, user_orders b " +
+            " where a.remaining_value < b.remaining_value and  a.type = 1 and a.id_stock = b.id_stock and a.id <> b.id  and a.status <>2 and b.status <> 2 and a.type <> b.type and a.price <= b.price order by a.created_on asc", nativeQuery = true)
     List<UserOrders> testando1();
 
     @Modifying
@@ -88,7 +90,7 @@ public interface UserOrdersRepository extends JpaRepository<UserOrders, Long> {
     @Query(value = "select MIN(price) from user_orders where id_stock = ?1 and status = 1 and type = 0", nativeQuery = true)
     Double getBidMin(Long id_stock);
 
-    @Query(value = "select * from user_orders uo where id_user=1", nativeQuery = true)
-    List<UserOrders> listOrders();
+    @Query(value = "select * from user_orders uo where id_user=?1", nativeQuery = true)
+    List<UserOrders> listOrders(Long id_user);
 
 }

@@ -11,10 +11,10 @@ import java.util.List;
 
 @Repository
 public interface UserStockBalancesRepository extends JpaRepository<UserStockBalances, UserStockBalance> {
-    @Query(value = "select * from user_stock_balances where id_user=1", nativeQuery = true)
-    List<UserStockBalances> listCarteira();
+    @Query(value = "select * from user_stock_balances where id_user=?1", nativeQuery = true)
+    List<UserStockBalances> listCarteira(Long id_user);
 
-    @Query(value = "select * from user_stock_balances where id_user=1 and stock_name = ?1", nativeQuery = true)
-    List<UserStockBalances> listCarteira2(String stock_name);
+    @Query(value = "select * from user_stock_balances where id_user=?1 and stock_name = ?2", nativeQuery = true)
+    List<UserStockBalances> listCarteira2(Long id_user, String stock_name);
 
 }

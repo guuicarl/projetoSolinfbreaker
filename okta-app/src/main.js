@@ -5,6 +5,13 @@ import OktaVue from '@okta/okta-vue'
 import { oktaAuth } from './okta';
 import './assets/tailwind.css'
 
+// linhas alteradas
+// import VueSweetalert2 from 'vue-sweetalert2';
+// import 'sweetalert2/dist/sweetalert2.min.css';
+
+// app.use(VueSweetalert2);
+
+// ate emcima
 createApp(App)
     .use(router)
     .use(OktaVue, {

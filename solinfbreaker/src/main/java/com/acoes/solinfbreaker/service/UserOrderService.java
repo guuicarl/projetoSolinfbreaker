@@ -2,6 +2,7 @@ package com.acoes.solinfbreaker.service;
 
 import com.acoes.solinfbreaker.dto.UserOrdersDto;
 import com.acoes.solinfbreaker.model.UserOrders;
+import com.acoes.solinfbreaker.model.UserStockBalances;
 import com.acoes.solinfbreaker.repository.CompraRepository;
 import com.acoes.solinfbreaker.repository.UserOrdersRepository;
 import com.acoes.solinfbreaker.repository.UsersRepository;
@@ -30,28 +31,30 @@ public class UserOrderService {
             List<UserOrders> userteste= compraRepository.fyndteste();
             List<UserOrders> userteste1= compraRepository.findtTeste1();
             List<UserOrders> userFind = userOrdersRepository.findByCalculo();
-                if(!userteste1.isEmpty()) {
-                    System.out.println("compra negativa");
-                    for (UserOrders cont:userteste1)  {
-                        compraRepository.updateDollarBalanceNE(cont, cont.getUser());
-                        compraRepository.RemainingNE(cont);
-                        compraRepository.atualizarBalanceNE(cont.getId(),cont.getUser(), cont.getId_stock());
-                    }
-                    //userOrdersRepository.updateStatus2();
-                }
                 if(!userFind.isEmpty() ){
                     System.out.println("venda positiva");
                     for (UserOrders cont: userFind) {
                         userOrdersRepository.updateDollarBalance(cont.getUser());
-                        userOrdersRepository.updateRemainingValue(cont.getId_stock(),cont);
+                        userOrdersRepository.updateRemainingValue(cont);
                         userOrdersRepository.atualizarBalance(cont.getUser(), cont.getId_stock());
+                    }
+                }
+                if(!userteste1.isEmpty()) {
+                    System.out.println("compra negativa");
+                    for (UserOrders cont:userteste1)  {
+                        compraRepository.updateDollarBalanceNE(cont, cont.getUser());
+                        compraRepository.teste1(cont.getUser(), cont.getId_stock(), cont.getStock_symbol(), cont.getStock_name());
+                        compraRepository.atualizarBalanceNE(cont.getId(),cont.getUser(), cont.getId_stock());
+                        compraRepository.RemainingNE(cont);
                     }
                 }
                 if(!userteste.isEmpty()){
                     System.out.println("compra positiva");
                     for ( UserOrders cont: userteste ) {
+//                        compraRepository.teste1(cont.getUser(), cont.getId_stock(), cont.getStock_symbol(), cont.getStock_name());
                         compraRepository.updateDollarBalancePO(cont.getUser(), cont);
                         compraRepository.RemainigPO(cont, cont.getUser());
+                        compraRepository.teste1(cont.getUser(), cont.getId_stock(), cont.getStock_symbol(), cont.getStock_name());
                         compraRepository.atualizarBalancePO(cont.getId(), cont.getUser(), cont.getId_stock());
                     }
                     //userOrdersRepository.updateStatus();
@@ -66,5 +69,9 @@ public class UserOrderService {
                 }
                 userOrdersRepository.updateStatus2();
         return null;
+    }
+    public List<UserOrders> getUser(Long id_user) throws Exception {
+        List<UserOrders> userOrders = userOrdersRepository.listOrders(id_user);
+        return userOrders;
     }
 }

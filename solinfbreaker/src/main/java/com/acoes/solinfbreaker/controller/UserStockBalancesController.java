@@ -64,15 +64,21 @@ public class UserStockBalancesController {
 
     }
 
-    @GetMapping("/wallet")
-    public List<UserStockBalances> listarCarteira(){
-        return  userStockBalancesRepository.listCarteira();
+    @GetMapping("/wallet/{id_user}")
+    public ResponseEntity<List<UserStockBalances>> getUser(@PathVariable("id_user") Long id_user) {
+        try {
+            return ResponseEntity.ok().body(service.getUser(id_user));
+        }  catch (Exception e) {
+            if(e.getMessage().equals("FAZENDA_NOT_FOUND"))
+                return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    @GetMapping("/{stock_name}")
-    public ResponseEntity<List<UserStockBalances>> getBalance(@PathVariable("stock_name") String stock_name) {
+    @GetMapping("/{id_user}/{stock_name}")
+    public ResponseEntity<List<UserStockBalances>> getBalance(@PathVariable Long id_user, @PathVariable String stock_name) {
         try {
-            return ResponseEntity.ok().body(service.getStock(stock_name));
+            return ResponseEntity.ok().body(service.getStock(id_user, stock_name));
         }  catch (Exception e) {
             if(e.getMessage().equals("FAZENDA_NOT_FOUND"))
                 return ResponseEntity.notFound().build();
