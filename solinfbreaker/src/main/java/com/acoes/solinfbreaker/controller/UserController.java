@@ -9,6 +9,7 @@ import com.acoes.solinfbreaker.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -30,6 +32,25 @@ public class UserController {
     public List<User> listar(){
         return usersRepository.findAll();
     }
+
+    @GetMapping("/u/{username}")
+    public Long lista(@PathVariable ("username") String username){
+        Optional<User> us = usersRepository.findByUser(username);
+        if(us.isEmpty()){
+            return usersRepository.save(new User(username, "teste1234", 10000.00)).getId();
+        }else {
+            return us.get().getId();
+        }
+    }
+
+    @GetMapping("/user/{id}")
+    public Double lista1(@PathVariable ("id") Long id){
+        Optional<User> us = usersRepository.findById(id);
+        return us.get().getDollar_balance();
+    }
+
+
+//            return ResponseEntity.ok().body(service.getUser(id_user));
 
     /*@GetMapping
     public UserStockBalances obterPorCodigo(Long id,@RequestHeader("Authorization") String token ) {

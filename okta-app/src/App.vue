@@ -36,7 +36,7 @@
     </div>
   </div>
   <footer class="text-gray-100 bg-gray-800 fixed inset-x-0 bottom-0">
-        <div class="max-w-3xl mx-auto py-10">
+        <div class="max-w-3xl mx-auto py-5">
     
     
             <hr class="h-px mt-6 bg-gray-700 border-none">

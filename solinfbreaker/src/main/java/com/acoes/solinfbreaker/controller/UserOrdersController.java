@@ -9,6 +9,7 @@ import com.acoes.solinfbreaker.repository.CompraRepository;
 import com.acoes.solinfbreaker.repository.UserOrdersRepository;
 import com.acoes.solinfbreaker.repository.UsersRepository;
 import com.acoes.solinfbreaker.service.StockService;
+import com.acoes.solinfbreaker.service.TesteService;
 import com.acoes.solinfbreaker.service.UserOrderService;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class UserOrdersController {
     private StockService stockService;
     @Autowired
     private UserOrderService userOrderService;
+    @Autowired
+    private TesteService testeService;
 
     @GetMapping("/orders")
     public List<UserOrders> listar(){
@@ -63,7 +66,8 @@ public class UserOrdersController {
         if(dollar >= mult) {//verifica se o usuario tem dinheiro na carteira pra criar uma ordem de compra
             UserOrders userOrders = userOrdersRepository.save(dto.tranformaParaObjeto1(user));
             stockService.teste1(userOrders.getId_stock(), token);
-            userOrderService.vender();
+//            userOrderService.vender();
+            testeService.testando();
             return new ResponseEntity<>(userOrders, HttpStatus.CREATED);
         } else {
             System.out.println("Ordem não criada, valor insuficiente");

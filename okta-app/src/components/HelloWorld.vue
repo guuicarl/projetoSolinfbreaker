@@ -1,7 +1,8 @@
 <template>
-  <div class="py-40 flex w-full md:w-auto">
+    <h1 class="text-4xl h-1 mt-5 ml-20 text-gray-900 font-mono">Olá <span class="text-yellow-500">{{this.claims.name}}</span>, o que deseja fazer hoje?</h1>
+  <div class="py-40 flex ">
     <!-- card vem aqui -->
-    <div class="bg-white rounded-lg shadow-2x1 w-5/12 ml-20">
+    <div class="bg-white rounded-lg shadow-2x1 w-5/12 ml-20 -mt-10 flex-initial h-1/2">
       <!-- header -->
       <header
         class="
@@ -111,27 +112,26 @@
                   class="text-sm text-gray-900"
                   v-if="this.$root.authenticated"
                 >
-                  {{ stock.bid_min }}
+                  {{ stock.bid_min.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'}) }}
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span class="text-sm text-gray-900">
-                  {{ stock.bid_max }}
+                <span class="text-sm text-gray-900" >
+                  {{ stock.bid_max.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ stock.ask_min }}
+                {{ stock.ask_min.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'}) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ stock.ask_max }}
+                {{ stock.ask_max.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'}) }}
               </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-
-    <div class="bg-white rounded-lg shadow-2x1 w-5/12 ml-20">
+    <div class="bg-white rounded-lg shadow-2x1 w-5/12 ml-20 -mt-10 h-1/2">
       <!-- header -->
       <header
         class="
@@ -167,7 +167,7 @@
               <th
                 scope="col"
                 class="
-                  px-6
+                  px-2
                   py-3
                   text-left text-xs
                   font-medium
@@ -246,7 +246,7 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class="text-sm text-gray-900">
-                  {{ order.price }}
+                  {{ order.price.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'}) }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -266,6 +266,7 @@
 <script>
 import "../assets/tailwind.css";
 import axios from "axios";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 const people = [
   {
     name: "Jane Cooper",
@@ -284,6 +285,7 @@ export default {
   data: function () {
     return {
       claims: "",
+      id: 0,
       welcome: "",
       users: [],
       stocks: [],
@@ -300,15 +302,38 @@ export default {
   created() {
     this.user();
     this.setup();
+    this.novo();
   },
   methods: {
+    async novo (){
+      const nova = (stock) => {
+        this.stocks = stock
+      }
+            let accessToken = this.$auth.getAccessToken();
+      await fetchEventSource("http://localhost:8085/temporeal", {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+        onmessage(ev) {
+            console.log(ev)
+            console.log(JSON.parse(ev.data))
+            nova(JSON.parse(ev.data))
+        },
+        onerror(err) {
+          if (err) {
+            console.log("Sou do erro", err);
+            throw err; // rethrow to stop the operation
+          }
+        },
+      });
+      },
     async setup() {
       if (this.$root.authenticated) {
         this.claims = await this.$auth.getUser();
         let accessToken = this.$auth.getAccessToken();
         console.log(`Authorization: Bearer ${accessToken}`);
         console.log("testando");
-        console.log(this.users)
+        console.log(this.claims.name)
         try {
           let response = await axios.get("http://localhost:8082/", {
             headers: { Authorization: "Bearer " + accessToken },
@@ -326,21 +351,6 @@ export default {
         } catch (error) {
           this.stocks = `${error}`;
         }
-        try {
-          var id = 0;
-          for(var k = 0; k < this.users.length;k++){
-            if(this.claims.name == this.users[k].username){
-              id = this.users[k].id
-              console.log('aqui eu passo' + this.users[k].id)
-            }
-          }
-          let response = await axios.get(`http://localhost:8082/uo/${id}`, {
-            headers: { Authorization: "Bearer " + accessToken },
-          });
-          this.orders = response.data;
-        } catch (error) {
-          this.orders = `${error}`;
-        }
         for (var i = 0; i < this.orders.length; i++) {
           if (this.orders[i].status == 1) {
             this.orders[i].status = "Aberto";
@@ -356,51 +366,28 @@ export default {
       }
     },
     async user() {
-      var teste = false;
-      this.claims = await Object.entries(await this.$auth.getUser()).map(
-        (entry) => ({ claim: entry[0], value: entry[1] })
-      );
+      this.claims = await this.$auth.getUser();
       let accessToken = this.$auth.getAccessToken();
       try {
         let response = await axios.get(
-          `http://localhost:8082/users`,
+          `http://localhost:8082/u/${this.claims.name}`,
 
           {
             headers: { Authorization: "Bearer " + accessToken },
           }
         );
-        this.users = response.data;
-        console.log("olha pra baixo");
-        console.log(this.users);
+        this.id = response.data;
       } catch (error) {
         this.users = `${error}`;
       }
-      for (var i = 0; i < this.users.length; i++) {
-        if (this.claims[1].value == this.users[i].username) {
-          teste = true;
-        } else {
-          console.log("Usurio ta ai besta");
-        }
-      }
-      if (teste == false) {
-        try {
-          await axios.post(
-            "http://localhost:8082/users",
-            {
-              username: this.claims[1].value,
-              password: "teste1234",
-              dollar_balance: 10000,
-              enabled: true,
-            },
-            {
-              headers: { Authorization: "Bearer " + accessToken },
-            }
-          );
+      try {
+          let response = await axios.get(`http://localhost:8082/uo/${this.id}`, {
+            headers: { Authorization: "Bearer " + accessToken },
+          });
+          this.orders = response.data;
         } catch (error) {
-          console.log(error);
+          this.orders = `${error}`;
         }
-        console.log(this.claims);
-      }
     },
   },
   setup() {

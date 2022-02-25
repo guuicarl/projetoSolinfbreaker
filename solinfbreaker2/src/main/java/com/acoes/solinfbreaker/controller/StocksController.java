@@ -7,11 +7,16 @@ import com.acoes.solinfbreaker.repository.StocksRepository;
 import com.acoes.solinfbreaker.service.StocksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @CrossOrigin
 @RestController
@@ -37,11 +42,26 @@ public class StocksController {
             return ResponseEntity.badRequest().build();
         }
     }
+    public List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
+
+    @GetMapping(value = "/temporeal")
+    public SseEmitter temporeal(HttpServletResponse response){
+        response.setHeader("Cache_Control", "no-store");
+        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+        try {
+            emitters.add(sseEmitter);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        sseEmitter.onCompletion(() -> emitters.remove(sseEmitter));
+        return sseEmitter;
+    }
 
     @GetMapping("/updated")
     public List<Stocks> listar10(){
         return stocksRepository.findStocks();
     }
+
 
     @GetMapping("/stocks")
     public List<Stocks> listar(){
@@ -59,7 +79,28 @@ public class StocksController {
             stock.setBid_max(stockDto.getBid_max());
             stock.setBid_min(stockDto.getBid_min());
         }
-        return new ResponseEntity<>(stocksRepository.save(stock), HttpStatus.CREATED);
+         stock = stocksRepository.save(stock);
+        publicar();
+
+//        for(SseEmitter emitter : emitters) {
+//            try {
+//                emitter.send(SseEmitter.event().name("latestupdate").data(stocksRepository.findAll()));
+//            } catch (IOException e){
+//                emitters.remove(emitter);
+//            }
+//        }
+
+        return new ResponseEntity<>(stock, HttpStatus.CREATED);
+    }
+
+    public void publicar(){
+        for(SseEmitter emitter : emitters) {
+            try {
+                emitter.send(stocksRepository.findStocks());
+            } catch (IOException e){
+                emitters.remove(emitter);
+            }
+        }
     }
 
 }

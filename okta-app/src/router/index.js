@@ -25,11 +25,17 @@ const router = createRouter({
     },
     {
       path: '/teste',
-      component: Teste
+      component: Teste,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/carteira',
-      component: Carteira
+      component: Carteira,
+      meta: {
+        requiresAuth: true
+      }
     },
   ]
 })

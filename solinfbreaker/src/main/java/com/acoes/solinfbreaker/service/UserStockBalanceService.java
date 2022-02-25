@@ -20,4 +20,5 @@ public class UserStockBalanceService {
         List<UserStockBalances> userStockBalances = repository.listCarteira(id_user);
         return userStockBalances;
     }
+
 }

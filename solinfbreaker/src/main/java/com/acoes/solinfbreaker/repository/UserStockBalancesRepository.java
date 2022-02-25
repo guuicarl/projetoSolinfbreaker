@@ -17,4 +17,7 @@ public interface UserStockBalancesRepository extends JpaRepository<UserStockBala
     @Query(value = "select * from user_stock_balances where id_user=?1 and stock_name = ?2", nativeQuery = true)
     List<UserStockBalances> listCarteira2(Long id_user, String stock_name);
 
+    @Query(value = "select * from user_stock_balances  where id_user = ?1 and id_stock = ?2 ", nativeQuery = true)
+    List <UserStockBalances> atualizarBalance(Long id_user, Long id_stock);
+
 }

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.4.3",
+    "@microsoft/fetch-event-source": "^2.0.1",
     "@okta/okta-auth-js": "^5.5.0",
     "@okta/okta-signin-widget": "^5.12.0",
     "@okta/okta-vue": "^5.0.1",

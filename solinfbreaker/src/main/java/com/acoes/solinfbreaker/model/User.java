@@ -97,4 +97,12 @@ public class User {
         return Objects.hash(id, username, password, dollar_balance, enable, created_on, updated_on);
     }
 
+    public User(String username, String password, Double dollar_balance) {
+        this.username = username;
+        this.password = password;
+        this.dollar_balance = dollar_balance;
+    }
+
+    public User() {
+    }
 }

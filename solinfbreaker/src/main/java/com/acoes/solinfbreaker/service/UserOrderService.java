@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserOrderService {
@@ -31,19 +32,20 @@ public class UserOrderService {
             List<UserOrders> userteste= compraRepository.fyndteste();
             List<UserOrders> userteste1= compraRepository.findtTeste1();
             List<UserOrders> userFind = userOrdersRepository.findByCalculo();
+
                 if(!userFind.isEmpty() ){
                     System.out.println("venda positiva");
                     for (UserOrders cont: userFind) {
                         userOrdersRepository.updateDollarBalance(cont.getUser());
                         userOrdersRepository.updateRemainingValue(cont);
-                        userOrdersRepository.atualizarBalance(cont.getUser(), cont.getId_stock());
+//                        userOrdersRepository.atualizarBalance(cont.getUser(), cont.getId_stock());
                     }
                 }
                 if(!userteste1.isEmpty()) {
                     System.out.println("compra negativa");
                     for (UserOrders cont:userteste1)  {
                         compraRepository.updateDollarBalanceNE(cont, cont.getUser());
-                        compraRepository.teste1(cont.getUser(), cont.getId_stock(), cont.getStock_symbol(), cont.getStock_name());
+//                        compraRepository.teste1(cont.getUser(), cont.getId_stock(), cont.getStock_symbol(), cont.getStock_name());
                         compraRepository.atualizarBalanceNE(cont.getId(),cont.getUser(), cont.getId_stock());
                         compraRepository.RemainingNE(cont);
                     }
@@ -54,7 +56,7 @@ public class UserOrderService {
 //                        compraRepository.teste1(cont.getUser(), cont.getId_stock(), cont.getStock_symbol(), cont.getStock_name());
                         compraRepository.updateDollarBalancePO(cont.getUser(), cont);
                         compraRepository.RemainigPO(cont, cont.getUser());
-                        compraRepository.teste1(cont.getUser(), cont.getId_stock(), cont.getStock_symbol(), cont.getStock_name());
+//                        compraRepository.teste1(cont.getUser(), cont.getId_stock(), cont.getStock_symbol(), cont.getStock_name());
                         compraRepository.atualizarBalancePO(cont.getId(), cont.getUser(), cont.getId_stock());
                     }
                     //userOrdersRepository.updateStatus();
