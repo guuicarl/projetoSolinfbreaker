@@ -4,6 +4,8 @@ import LoginComponent from '@/components/Login'
 import HomeComponent from '@/components/HelloWorld'
 import Teste from '@/components/Teste'
 import Carteira from '@/components/Carteira'
+import About from '@/views/About'
+import Stocks from '@/components/Stocks'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,6 +35,20 @@ const router = createRouter({
     {
       path: '/carteira',
       component: Carteira,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/about',
+      component: About,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/stocks',
+      component: Stocks,
       meta: {
         requiresAuth: true
       }

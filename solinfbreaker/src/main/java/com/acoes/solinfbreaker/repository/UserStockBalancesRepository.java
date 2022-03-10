@@ -1,5 +1,6 @@
 package com.acoes.solinfbreaker.repository;
 
+import com.acoes.solinfbreaker.model.User;
 import com.acoes.solinfbreaker.model.UserOrders;
 import com.acoes.solinfbreaker.model.UserStockBalance;
 import com.acoes.solinfbreaker.model.UserStockBalances;
@@ -19,5 +20,11 @@ public interface UserStockBalancesRepository extends JpaRepository<UserStockBala
 
     @Query(value = "select * from user_stock_balances  where id_user = ?1 and id_stock = ?2 ", nativeQuery = true)
     List <UserStockBalances> atualizarBalance(Long id_user, Long id_stock);
+
+    @Query(value =  "  select * from user_stock_balances usb where id_user = ?1 and id_stock = ?2 " , nativeQuery = true)
+    List<UserStockBalances> verficarStock(Long id_user, Long id_stock);
+
+    @Query(value = "select * from user_stock_balances  where id_user = ?1 and id_stock = ?2 ", nativeQuery = true)
+    List <UserStockBalances> atualizarBalanceTeste(User id_user, Long id_stock);
 
 }

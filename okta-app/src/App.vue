@@ -1,4 +1,5 @@
 <template>
+<div class="bg-indigo-100 min-h-screen">
   <div id="app2">
     <nav class="bg-gray-800">
     <div class="max-w-6x1">
@@ -54,7 +55,7 @@
             </div>
         </div>
     </footer>   
-
+</div>
 </template>
 
 <script>

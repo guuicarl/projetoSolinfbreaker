@@ -56,6 +56,10 @@ public class UserOrders {
         this.status = status;
         this.remaining_value = remaining_value;
     }
+    public UserOrders(Long id, Integer status){
+        this.id = id;
+        this.status = status;
+    }
 
     @Override
     public boolean equals(Object o) {

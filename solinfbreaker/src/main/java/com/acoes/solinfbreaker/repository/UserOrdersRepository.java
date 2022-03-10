@@ -3,6 +3,8 @@ package com.acoes.solinfbreaker.repository;
 import com.acoes.solinfbreaker.model.User;
 import com.acoes.solinfbreaker.model.UserOrders;
 import com.acoes.solinfbreaker.model.UserStockBalances;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -105,7 +107,26 @@ public interface UserOrdersRepository extends JpaRepository<UserOrders, Long> {
     @Query(value = "select MIN(price) from user_orders where id_stock = ?1 and status = 1 and type = 0", nativeQuery = true)
     Double getBidMin(Long id_stock);
 
-    @Query(value = "select * from user_orders uo where id_user=?1 fetch first 10 rows only", nativeQuery = true)
-    List<UserOrders> listOrders(Long id_user);
+    @Query(value = "select * from user_orders uo where id_user=?1", nativeQuery = true)
+    Page<UserOrders> listOrders(Long id_user, Pageable page);
+
+    @Query(value = "select MIN(case when created_on > now() - interval '1 hour' then price end)   from user_orders uo where id_stock = ?1", nativeQuery = true)
+    Double getLow(Long id_stock);
+
+    @Query(value = "select MAX(case when created_on > now() - interval '1 hour' then price end)   from user_orders uo where id_stock = ?1", nativeQuery = true)
+    Double getMax(Long id_stock);
+
+    @Query(value = "select price from user_orders uo2 where created_on > now() - interval '1 hour' and id_stock=?1 order by created_on asc fetch first 1 row only", nativeQuery = true)
+    Double getOpen(Long id_stock);
+
+    @Query(value = "select price from user_orders uo2 where created_on > now() - interval '1 hour' and id_stock= ?1 order by created_on desc fetch first 1 row only", nativeQuery = true)
+    Double getClose(Long id_stock);
+
+
+
+//    todos testes novos abaixo qualquer coisa apaga tudo
+
+    @Query(value = "select * from user_orders uo where id_stock = ?1 ", nativeQuery = true)
+    Optional<UserOrders> testandoNovo(Long id_stock);
 
 }

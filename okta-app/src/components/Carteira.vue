@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-300 py-40 flex justify-center" v-if="this.$root.authenticated">
+    <div class=" py-40 flex justify-center mb-14" v-if="this.$root.authenticated">
     <!-- card vem aqui -->
     <div class="bg-white rounded-lg shadow-2x1 w-1/2">
       <!-- header -->

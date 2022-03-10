@@ -1,5 +1,5 @@
 <template>
-  <div class="py-40 md:w-auto" >
+  <div class="py-40 md:w-auto " >
     <!-- card vem aqui -->
     <div class="bg-white rounded-lg shadow-2x1 w-1/2 justify-center ml-auto mr-auto">
       <!-- header -->
@@ -315,6 +315,8 @@ export default {
           console.log("id: " + this.teste[0].id + " Symbol: " + this.teste[0].stock_symbol + " Nome: " + this.name + " Volume: " + this.volume  + " Preço: " + this.bid) 
         } catch (error) {
           console.log(error);
+          this.erro = true
+          this.sucesso = false
         }
         // } else {
         //   this.erro = true

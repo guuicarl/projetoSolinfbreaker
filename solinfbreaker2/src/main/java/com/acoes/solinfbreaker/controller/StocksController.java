@@ -2,18 +2,21 @@ package com.acoes.solinfbreaker.controller;
 
 
 import com.acoes.solinfbreaker.dto.StockDto;
+import com.acoes.solinfbreaker.model.Grafico;
 import com.acoes.solinfbreaker.model.Stocks;
+import com.acoes.solinfbreaker.repository.GraficoRepository;
 import com.acoes.solinfbreaker.repository.StocksRepository;
 import com.acoes.solinfbreaker.service.StocksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -25,11 +28,19 @@ public class StocksController {
     private StocksRepository stocksRepository;
     @Autowired
     private StocksService service;
+    @Autowired
+    private GraficoRepository graficoRepository;
 
     @GetMapping("/stocks/{id}")
     public Optional<Stocks> obterStock(@PathVariable(value = "id")Long id) throws Exception {
         Thread.sleep(3000);
         return stocksRepository.findById(id);
+    }
+
+    @GetMapping("/historico/{id_stock}")
+    public List<Grafico> obterGrafico(@PathVariable(value = "id_stock")Long id_stock) throws Exception {
+        Thread.sleep(3000);
+        return graficoRepository.findByStock(id_stock);
     }
 
     @GetMapping("/{stock_name}")
@@ -81,16 +92,29 @@ public class StocksController {
         }
          stock = stocksRepository.save(stock);
         publicar();
-
-//        for(SseEmitter emitter : emitters) {
-//            try {
-//                emitter.send(SseEmitter.event().name("latestupdate").data(stocksRepository.findAll()));
-//            } catch (IOException e){
-//                emitters.remove(emitter);
-//            }
-//        }
-
+        atualizaPrices(stock);
         return new ResponseEntity<>(stock, HttpStatus.CREATED);
+    }
+
+    private void atualizaPrices(Stocks stocks) {
+        Date date = new Date();
+        Optional<Grafico> historic2 = graficoRepository.findByIdAndDate(stocks.getId(), new Timestamp(date.getTime()));
+
+        if(historic2.isPresent()) {
+            if (historic2.get().getHigh() < stocks.getAsk_min()) {
+                historic2.get().setHigh(stocks.getAsk_min());
+            }
+            if (historic2.get().getLow() > stocks.getAsk_min()) {
+                historic2.get().setLow(stocks.getAsk_min());
+            }
+            historic2.get().setFechado(stocks.getAsk_min());
+            graficoRepository.save(historic2.get());
+        }
+        else if (stocks.getAsk_min() == null){
+            System.out.println("Nao pode ser criado");
+        } else {
+            graficoRepository.save(new Grafico(stocks));
+        }
     }
 
     public void publicar(){
