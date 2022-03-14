@@ -218,20 +218,6 @@
               >
                 Volume
               </th>
-                            <th
-                scope="col"
-                class="
-                  px-2
-                  py-3
-                  text-left text-xs
-                  font-medium
-                  text-gray-500
-                  uppercase
-                  tracking-wider
-                "
-              >
-                Volume restante
-              </th>
               <th
                 scope="col"
                 class="
@@ -313,14 +299,6 @@
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div
-                  class="text-sm text-gray-900"
-                  v-if="this.$root.authenticated"
-                >
-                  {{ order.remaining_value }}
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
                 <span class="text-sm text-gray-900">
                   {{
                     order.price.toLocaleString("pt-br", {
@@ -360,15 +338,7 @@
                 </button>
                 Fechar
               </td>
-              <td v-if="order.status == 2 && order.remaining_value != 0" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex">
-                <button>
-<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor" @click="abrir(order.id)">
-  <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
-</svg>
-                </button>
-                Abrir
-              </td>
-              <td v-if="order.remaining_value ==0 " class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td v-if="order.status ==2 " class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <h1>Ordem finalizada!</h1>
               </td>
             </tr>
@@ -503,7 +473,7 @@ export default {
         this.users = `${error}`;
       }
       try {
-        let response = await axios.get(`http://localhost:8082/uo/${this.id}?pageSize=10&pageNumber=${this.page}`, {
+        let response = await axios.get(`http://localhost:8082/uo/${this.id}?pageSize=5&pageNumber=${this.page}`, {
           headers: { Authorization: "Bearer " + accessToken },
         });
         this.orders = response.data;
